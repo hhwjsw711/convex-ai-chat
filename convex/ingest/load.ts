@@ -106,9 +106,18 @@ export const eraseStaleDocumentsAndChunks = internalMutation({
 
 function parsePage(text: string) {
   const $ = load(text);
-  return parse($, $(".markdown"))
-    .replace(/(?:\n\s+){3,}/g, "\n\n")
-    .trim();
+  const selectors = ['main', 'article', '.docs-content', '#__next'];
+  let content = '';
+
+  for (const selector of selectors) {
+    const element = $(selector);
+    if (element.length > 0) {
+      content = parse($, element);
+      break;
+    }
+  }
+
+  return content.replace(/(?:\n\s+){3,}/g, "\n\n").trim();
 }
 
 function parse($: CheerioAPI, element: any) {
